@@ -4,7 +4,7 @@ using MetricsApi.Domain.Abstractions.Repositories;
 using MetricsApi.Domain.DTOs;
 using MetricsApi.Domain.Models;
 
-namespace MetricsApi.Application.Services;
+namespace MetricsApi.Application.Implementation;
 
 public class FileProcessingService : IFileProcessingService
 {
