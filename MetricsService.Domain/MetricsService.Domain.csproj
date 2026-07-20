@@ -7,8 +7,4 @@
         <RootNamespace>MetricsApi.Domain</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Abstractions\" />
-    </ItemGroup>
-
 </Project>

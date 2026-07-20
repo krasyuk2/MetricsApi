@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <Folder Include="DTOs\" />
+      <Folder Include="Middlewares\" />
     </ItemGroup>
 
     <ItemGroup>
