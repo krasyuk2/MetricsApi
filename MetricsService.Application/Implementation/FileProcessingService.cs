@@ -6,19 +6,35 @@ using MetricsApi.Domain.Models;
 
 namespace MetricsApi.Application.Implementation;
 
+/// <inheritdoc/>
 public class FileProcessingService : IFileProcessingService
 {
+    /// <summary>
+    ///     Парсер.
+    /// </summary>
     private readonly ICsvParser _parser;
+    
+    /// <summary>
+    ///     Валидатор.
+    /// </summary>
     private readonly ICsvValidator _validator;
+    
+    /// <summary>
+    ///     Точка взаимодействия с бд.
+    /// </summary>
     private readonly IMetricsRepository _repository;
 
+    /// <summary>
+    ///     Конструктор.
+    /// </summary>
     public FileProcessingService(ICsvParser parser, ICsvValidator validator, IMetricsRepository repository)
     {
         _parser = parser;
         _validator = validator;
         _repository = repository;
     }
-
+    
+    /// <inheritdoc/>
     public async Task<ProcessingResult> ProcessAsync(string fileName, Stream csvStream, CancellationToken ct)
     {
         var parsed = _parser.Parse(csvStream);
@@ -46,6 +62,13 @@ public class FileProcessingService : IFileProcessingService
         return ProcessingResult.Success();
     }
 
+    
+    /// <summary>
+    ///     Подсчитывает интегральные результаты по строкам файла.
+    /// </summary>
+    /// <param name="fileName"> Имя файла. </param>
+    /// <param name="rows"> Корректные строки csv файла. </param>
+    /// <returns> Интегральные результаты для записи в таблицу Results. </returns>
     private static ResultMetric CalculateMetrics(string fileName, IReadOnlyList<CsvRow> rows)
     {
         var minDate = rows.Min(r => r.StartTime);
@@ -64,6 +87,10 @@ public class FileProcessingService : IFileProcessingService
         };
     }
     
+    /// <summary>
+    ///     Считает медиану: середина отсортированного набора либо среднее двух центральных элементов.
+    /// </summary>
+    /// <param name="values"> Значения показателя. </param>
     private static double CalculateMedian(IEnumerable<double> values)
     {
         var sorted = values.Order().ToArray();

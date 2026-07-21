@@ -9,11 +9,17 @@ public class MetricsRepository : IMetricsRepository
 {
     private readonly ApplicationContext _context;
 
+    /// <summary>
+    ///     Конструктор.
+    /// </summary>
     public MetricsRepository(ApplicationContext context) => _context = context;
 
+    /// <inheritdoc/>
     public async Task ReplaceFileDataAsync(string fileName, IReadOnlyList<ValueRecord> values,
         ResultMetric result, CancellationToken ct)
     {
+        _context.ChangeTracker.Clear();
+        
         await using var tx = await _context.Database.BeginTransactionAsync(ct);
 
         await _context.Values.Where(x => x.FileName == fileName).ExecuteDeleteAsync(ct);
@@ -26,6 +32,7 @@ public class MetricsRepository : IMetricsRepository
         await tx.CommitAsync(ct);
     }
 
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ResultMetric>> GetResultsAsync(ResultFilter filter, CancellationToken ct)
     {
         var query = _context.Results.AsNoTracking().AsQueryable();
@@ -54,6 +61,7 @@ public class MetricsRepository : IMetricsRepository
         return await query.ToListAsync(ct);
     }
 
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ValueRecord>> GetLatestValuesAsync(string fileName, int count,
         CancellationToken ct)
     {

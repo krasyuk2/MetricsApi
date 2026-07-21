@@ -22,6 +22,7 @@ public class CsvParser : ICsvParser
         BadDataFound = null // кривые строки обрабатываем сами
     };
 
+    /// <inheritdoc/>
     public ParseResult Parse(Stream csvStream)
     {
         var rows = new List<CsvRow>();
@@ -81,6 +82,11 @@ public class CsvParser : ICsvParser
         return new ParseResult(rows, errors);
     }
     
+    /// <summary>
+    ///     Парсит число с плавающей запятой, допуская и запятую, и точку как разделитель.
+    /// </summary>
+    /// <param name="raw"> Исходная строка. </param>
+    /// <param name="result"> Распарсенное значение. </param>
     private static bool TryParseDouble(string? raw, out double result) =>
         double.TryParse(raw?.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 }

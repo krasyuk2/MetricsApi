@@ -2,6 +2,7 @@ using MetricsApi.Application.Implementation;
 using MetricsApi.Domain.Abstractions;
 using MetricsApi.Domain.Abstractions.Applications;
 using MetricsApi.Domain.Abstractions.Repositories;
+using MetricsApi.Middlewares;
 using MetricsApi.Repository;
 using MetricsApi.Repository.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

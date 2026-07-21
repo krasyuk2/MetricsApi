@@ -3,11 +3,14 @@ using MetricsApi.Domain.DTOs;
 
 namespace MetricsApi.Application.Implementation;
 
-/// <summary>Бизнес-валидация строк по правилам ТЗ.</summary>
+/// <summary>
+///     Бизнес-валидация строк по правилам ТЗ.
+/// </summary>
 public class CsvValidator : ICsvValidator
 {
     private static readonly DateTime MinDate = new(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+    /// <inheritdoc/>
     public IReadOnlyList<string> Validate(IReadOnlyList<CsvRow> rows)
     {
         var errors = new List<string>();
