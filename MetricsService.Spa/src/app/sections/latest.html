@@ -1,0 +1,54 @@
+<section class="panel">
+  <header class="panel-header">
+    <span class="chip chip-get">GET</span>
+    <code class="endpoint">/api/metrics/values/&#123;fileName&#125;/latest</code>
+    <h2>Последние 10 значений файла</h2>
+    <p class="hint">Отсортированы по времени запуска, новые сверху.</p>
+  </header>
+
+  <form class="upload-row" (ngSubmit)="load()">
+    <input
+      class="grow"
+      type="text"
+      name="latestFileName"
+      [(ngModel)]="fileName"
+      placeholder="Имя файла, например valid_metrics.csv"
+    />
+    <button class="btn" type="submit" [disabled]="!fileName.trim() || loading()">
+      {{ loading() ? 'Загрузка…' : 'Показать' }}
+    </button>
+  </form>
+
+  @if (errors().length > 0) {
+    <div class="status status-error">
+      <ul>
+        @for (error of errors(); track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (values().length > 0) {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Время запуска (UTC)</th>
+            <th class="num">Время выполнения, с</th>
+            <th class="num">Показатель</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of values(); track $index) {
+            <tr>
+              <td>{{ v.startTime | date:'yyyy-MM-dd HH:mm:ss.SSS':'UTC' }}</td>
+              <td class="num">{{ v.durationSeconds | number:'1.0-4' }}</td>
+              <td class="num">{{ v.value | number:'1.0-4' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

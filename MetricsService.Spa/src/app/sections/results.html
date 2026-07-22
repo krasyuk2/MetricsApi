@@ -1,0 +1,95 @@
+<section class="panel">
+  <header class="panel-header">
+    <span class="chip chip-get">GET</span>
+    <code class="endpoint">/api/metrics/results</code>
+    <h2>Интегральные результаты</h2>
+    <p class="hint">Все фильтры необязательны и применяются вместе.</p>
+  </header>
+
+  <form class="filters" (ngSubmit)="search()">
+    <label>
+      Имя файла
+      <input type="text" name="fileName" [(ngModel)]="filter.fileName" placeholder="например, valid_metrics.csv" />
+    </label>
+    <label>
+      Первый запуск — от
+      <input type="datetime-local" name="from" [(ngModel)]="filter.firstStartTimeFrom" />
+    </label>
+    <label>
+      Первый запуск — до
+      <input type="datetime-local" name="to" [(ngModel)]="filter.firstStartTimeTo" />
+    </label>
+    <label>
+      Средний показатель — от
+      <input type="number" step="any" name="meanFrom" [(ngModel)]="filter.valueMeanFrom" />
+    </label>
+    <label>
+      Средний показатель — до
+      <input type="number" step="any" name="meanTo" [(ngModel)]="filter.valueMeanTo" />
+    </label>
+    <label>
+      Среднее время, с — от
+      <input type="number" step="any" min="0" name="durFrom" [(ngModel)]="filter.avgDurationSecondsFrom" />
+    </label>
+    <label>
+      Среднее время, с — до
+      <input type="number" step="any" min="0" name="durTo" [(ngModel)]="filter.avgDurationSecondsTo" />
+    </label>
+
+    <div class="filter-actions">
+      <button class="btn" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Поиск…' : 'Найти' }}
+      </button>
+      <button class="btn btn-quiet" type="button" (click)="reset()" [disabled]="loading()">
+        Сбросить
+      </button>
+    </div>
+  </form>
+
+  @if (errors().length > 0) {
+    <div class="status status-error">
+      <ul>
+        @for (error of errors(); track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (loaded() && results().length === 0 && errors().length === 0) {
+    <p class="empty">Нет записей под эти условия — загрузите файл или ослабьте фильтры.</p>
+  }
+
+  @if (results().length > 0) {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Файл</th>
+            <th>Первый запуск (UTC)</th>
+            <th class="num">Дельта, с</th>
+            <th class="num">Ср. время, с</th>
+            <th class="num">Среднее</th>
+            <th class="num">Медиана</th>
+            <th class="num">Мин</th>
+            <th class="num">Макс</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of results(); track r.fileName) {
+            <tr>
+              <td>{{ r.fileName }}</td>
+              <td>{{ r.firstStartTime | date:'yyyy-MM-dd HH:mm:ss':'UTC' }}</td>
+              <td class="num">{{ r.deltaTimeSeconds | number:'1.0-3' }}</td>
+              <td class="num">{{ r.avgDurationSeconds | number:'1.0-3' }}</td>
+              <td class="num">{{ r.valueMean | number:'1.0-4' }}</td>
+              <td class="num">{{ r.valueMedian | number:'1.0-4' }}</td>
+              <td class="num">{{ r.valueMin | number:'1.0-4' }}</td>
+              <td class="num">{{ r.valueMax | number:'1.0-4' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
