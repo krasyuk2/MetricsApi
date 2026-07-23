@@ -1,12 +1,12 @@
-﻿services:
+services:
   postgres:
     image: postgres:16-alpine
     ports:
       - "5432:5432"
     environment:
-        POSTGRES_USER: admin
-        POSTGRES_PASSWORD: password
-        POSTGRES_DB: metric_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: metric_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,6 +14,27 @@
       interval: 3s
       timeout: 3s
       retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: MetricsService.Api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=metric_db;Username=admin;Password=password"
+    ports:
+      - "8080:8080"
+
+  spa:
+    build:
+      context: ./MetricsService.Spa
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
 
 volumes:
   postgres_data:
